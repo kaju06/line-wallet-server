@@ -29,8 +29,10 @@ describe('JWT', () => {
 
   it('Should retrieve userId from authorization header', done => {
     const req = {
-      headers: {
-        authorization: `Bearer ${genericToken}`
+      request: {
+        headers: {
+          authorization: `Bearer ${genericToken}`
+        }
       }
     }
 
@@ -51,8 +53,10 @@ describe('JWT', () => {
 
   it('Should return null on empty header', async done => {
     const req = {
-      headers: {
-        authorization: ''
+      request : {
+        headers: {
+          authorization: ''
+        }
       }
     }
 

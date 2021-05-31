@@ -5,14 +5,16 @@ module.exports = {
   Query: {
     getUsers: () => User.find(),
 
-    getUser: async (_, { id }) => {
+    getUser: async (_, { id }, context) => {
+      if (!context.userId) throw new Error('You must be authenticated!')
+      if (context.userId !== id) throw new Error('You can only see you own datas little fella!')
+
       return User.findById(id)
     }
   },
 
   Mutation: {
     singup: async (_, { email, username, password }) => {
-      console.log('auth', Auth)
       const hashedPwd = await Auth.hashPassword(password)
       const user = new User({ email, username, password: hashedPwd })
       await user.save()
@@ -22,22 +24,19 @@ module.exports = {
     login: async (_, { email, username, password }) => {
       if (!username && !email) throw new Error('email or username required')
       const userPayload = email ? { email } : {username}
-      const user = User.findOne(userPayload)
+      const user = await User.findOne(userPayload)
       if (!user) throw new Error('Unknown user', userPayload)
 
       const correctPassword = await Auth.matchPasswords(password, user.password)
       if (!correctPassword) throw new Error('invalid password')
 
-      return Auth.generateJwt({
-        userId: user.id,
-        username: user.username,
-        email: user.email
-      })
+      return {
+        jwt: Auth.generateJwt({
+          userId: user.id,
+          username: user.username,
+          email: user.email
+        })
+      }
     },
-
-    deleteUser: async (_, {id}) => {
-      await User.findByIdAndRemove(id)
-      return "User deleted";
-    }
   }
 }
