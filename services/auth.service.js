@@ -31,8 +31,8 @@ class Auth {
   }
 
   static getUserId({ req = {}, authToken = '' }) {
-    if (req.headers) {
-      const authHeader = req.headers.authorization
+    if (req.request?.headers) {
+      const authHeader = req.request.headers.authorization
       if (authHeader) {
         const token = authHeader.replace('Bearer ', '')
         if (!token) {

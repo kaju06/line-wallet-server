@@ -4,8 +4,6 @@ const Auth = require('./services/auth.service')
 const typeDefs = require('./graphql/schema/index')
 const resolvers = require('./graphql/resolvers/index')
 
-console.log('auth class:', Auth)
-
 mongoose.connect(
   "mongodb://localhost:27017/brutal-tats",
   { useNewUrlParser: true, useUnifiedTopology: true }
@@ -19,7 +17,7 @@ const server = new GraphQLServer({
       ...req,
       userId:
         req
-          ? Auth.getUserId(req)
+          ? Auth.getUserId({req})
           : null
     };
   }
