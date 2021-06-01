@@ -19,11 +19,7 @@ describe('getUser', () => {
     const newUser = new User({email: 'steeve@gmail.com', username: 'steeveo', password: 'plop'})
     await newUser.save()
 
-    try {
-      await resolvers.Query.getUser({}, {id: newUser.id}, {})
-    } catch (e) {
-      expect(e.message).toMatch(/must be authenticated/)
-    }
+    await expect(resolvers.Query.getUser({}, {id: newUser.id}, {})).rejects.toThrow(/must be authenticated/)
   
     done()
   })
@@ -31,12 +27,8 @@ describe('getUser', () => {
     const newUser = new User({email: 'steeve@gmail.com', username: 'steeveo', password: 'plop'})
     await newUser.save()
 
-    try {
-      await resolvers.Query.getUser({}, {id: newUser.id}, { userId: '123'})
-    } catch (e) {
-      expect(e.message).toMatch(/own datas/)
-    }
-  
+    await expect(resolvers.Query.getUser({}, {id: newUser.id}, { userId: '123'})).rejects.toThrow(/own datas/)
+   
     done()
   })
 })

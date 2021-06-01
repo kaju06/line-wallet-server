@@ -25,6 +25,9 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.10"
   },
+  "engines": {
+    "node": ">=14"
+  },
   "scripts": {
     "start": "nodemon app.js"
   },
