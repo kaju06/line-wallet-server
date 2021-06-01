@@ -14,7 +14,7 @@ module.exports = {
   },
 
   Mutation: {
-    singup: async (_, { email, username, password }) => {
+    signup: async (_, { email, username, password }) => {
       const hashedPwd = await Auth.hashPassword(password)
       const user = new User({ email, username, password: hashedPwd })
       await user.save()

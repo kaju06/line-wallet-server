@@ -14,7 +14,7 @@ const User = `
     getUsers: [User]
   }
   type Mutation {
-    singup(email: String!, username: String!, password: String!): String!,
+    signup(email: String!, username: String!, password: String!): String!,
     login(email: String, username: String, password: String!): Token!,
   }`
 
