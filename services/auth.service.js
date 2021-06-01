@@ -10,7 +10,7 @@ class Auth {
 
   static async hashPassword(pwd) {
     const saltRounds = 10;
-    const salt = await bcrypt.genSaltSync(saltRounds);
+    const salt = bcrypt.genSaltSync(saltRounds);
     return bcrypt.hashSync(pwd, salt);
   }
 
