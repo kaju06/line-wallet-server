@@ -3,6 +3,10 @@ const Auth = require("../../../services/auth.service");
 const {
   createDwollaCustomer,
   getWalletBalance,
+  deposit,
+  withdraw,
+  createLabel,
+  getTransactions,
 } = require("../../../services/dwolla");
 const { sendMail } = require("../../../services/email.service");
 const { generateOTP } = require("../../../services/otp.service");
@@ -36,6 +40,10 @@ module.exports = {
     getWalletBalance: async (_, { userId }) => {
       const balance = await getWalletBalance(userId);
       return balance;
+    },
+    getTransactions: async (_, { userId }) => {
+      const transactions = await getTransactions(userId);
+      return transactions;
     },
   },
 
@@ -111,6 +119,21 @@ module.exports = {
       } catch (e) {
         return "Unable to fetch identity!";
       }
+    },
+
+    deposit: async (_, { userId, amount }) => {
+      await deposit(userId, amount);
+      return "Deposit successful!";
+    },
+
+    withdraw: async (_, { userId, amount }) => {
+      await withdraw(userId, amount);
+      return "Withdraw successful!";
+    },
+
+    createLabel: async (_, { userId, amount }) => {
+      const res = await createLabel(userId, amount);
+      return res;
     },
   },
 };

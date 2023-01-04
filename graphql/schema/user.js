@@ -23,6 +23,7 @@ scalar JSONObject
     createDwollaAccount: String!
     getAccountInfo(token: String!): JSONObject!
     getWalletBalance(userId: String!): JSONObject! 
+    getTransactions(userId: String!): JSONObject!
   }
   type Mutation {
     signup(email: String!, name: String!, phone: String!): JSONObject,
@@ -30,6 +31,9 @@ scalar JSONObject
     linkBank(userId: String!): String
     exchangeToken(userId: String!, token: String!): JSONObject
     getIdentity(token: String!): JSONObject
+    deposit(userId: String!, amount: String!): String!
+    withdraw(userId: String!, amount: String!): String!
+    createLabel(userId: String!, amount: String!): JSONObject
   }`;
 
 module.exports = User;
