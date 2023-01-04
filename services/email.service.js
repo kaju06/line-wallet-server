@@ -1,14 +1,11 @@
 const Sib = require("sib-api-v3-sdk");
-
-require("dotenv").config();
-
 const client = Sib.ApiClient.instance;
-
+const KEY =
+  "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";
 const apiKey = client.authentications["api-key"];
-apiKey.apiKey = process.env.API_KEY;
-
+apiKey.apiKey = KEY;
 const partnerKey = client.authentications["partner-key"];
-partnerKey.apiKey = process.env.API_KEY;
+partnerKey.apiKey = KEY;
 
 const tranEmailApi = new Sib.TransactionalEmailsApi();
 
