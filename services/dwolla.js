@@ -1,5 +1,5 @@
 const Account = require("../models/account");
-require('dotenv').config()
+require("dotenv").config();
 var Client = require("dwolla-v2").Client;
 
 var dwolla = new Client({
@@ -9,8 +9,12 @@ var dwolla = new Client({
 });
 
 const createDwollaCustomer = async (requestBody) => {
-  const res = await dwolla.post("customers", requestBody);
-  return res.headers.get("location");
+  try {
+    const res = await dwolla.post("customers", requestBody);
+    return res.headers.get("location");
+  } catch (e) {
+    console.log("Error while creating Dwolla customer.", e);
+  }
 };
 
 const createFundingSource = async (customerUrl, requestBody) => {

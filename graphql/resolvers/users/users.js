@@ -106,7 +106,7 @@ module.exports = {
     exchangeToken: async (_, { userId, token }) => {
       try {
         const accessToken = await publicTokenExchange(token);
-        await User.findOneAndUpdate({ _id: userId }, { token: accessToken });
+        User.findOneAndUpdate({ _id: userId }, { token: accessToken });
         //Dwolla account setup
         const identities = await getIdentity(accessToken);
         const res = await connectDwolla(userId, accessToken, identities);
