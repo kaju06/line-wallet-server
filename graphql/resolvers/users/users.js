@@ -110,7 +110,7 @@ module.exports = {
         //Dwolla account setup
         const identities = await getIdentity(accessToken);
         const res = await connectDwolla(userId, accessToken, identities);
-        return res;
+        return { accessToken, ...res };
       } catch (e) {
         return "Unable to exchange token!";
       }
