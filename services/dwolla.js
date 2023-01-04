@@ -14,13 +14,22 @@ const createDwollaCustomer = async (requestBody) => {
     return res.headers.get("location");
   } catch (e) {
     console.log("Error while creating Dwolla customer.", e);
+    throw e;
   }
 };
 
 const createFundingSource = async (customerUrl, requestBody) => {
-  console.log(customerUrl, requestBody);
-  const res = await dwolla.post(`${customerUrl}/funding-sources`, requestBody);
-  return res.headers.get("location");
+  try {
+    console.log(customerUrl, requestBody);
+    const res = await dwolla.post(
+      `${customerUrl}/funding-sources`,
+      requestBody
+    );
+    return res.headers.get("location");
+  } catch (e) {
+    console.log("Error while fetching funding sources.", e);
+    throw e;
+  }
 };
 
 const getWalletBalance = async (userId) => {
@@ -38,47 +47,57 @@ const getFundings = async (link) => {
 };
 
 const deposit = async (userId, amount) => {
-  const account = await Account.findOne({ user_id: userId });
-  let transferRequest = {
-    _links: {
-      source: {
-        href: `${account.bank_link}`,
+  try {
+    const account = await Account.findOne({ user_id: userId });
+    let transferRequest = {
+      _links: {
+        source: {
+          href: `${account.bank_link}`,
+        },
+        destination: {
+          href: `${account.dwolla_link}`,
+        },
       },
-      destination: {
-        href: `${account.dwolla_link}`,
+      amount: {
+        currency: "USD",
+        value: amount,
       },
-    },
-    amount: {
-      currency: "USD",
-      value: amount,
-    },
-  };
+    };
 
-  const res = await dwolla.post("transfers", transferRequest);
-  console.log(res.headers.get("location"));
-  return true;
+    const res = await dwolla.post("transfers", transferRequest);
+    console.log(res.headers.get("location"));
+    return true;
+  } catch (e) {
+    console.log("Error while depositing.", e);
+    throw e;
+  }
 };
 
 const withdraw = async (userId, amount) => {
-  const account = await Account.findOne({ user_id: userId });
-  let transferRequest = {
-    _links: {
-      source: {
-        href: `${account.dwolla_link}`,
+  try {
+    const account = await Account.findOne({ user_id: userId });
+    let transferRequest = {
+      _links: {
+        source: {
+          href: `${account.dwolla_link}`,
+        },
+        destination: {
+          href: `${account.bank_link}`,
+        },
       },
-      destination: {
-        href: `${account.bank_link}`,
+      amount: {
+        currency: "USD",
+        value: amount,
       },
-    },
-    amount: {
-      currency: "USD",
-      value: amount,
-    },
-  };
+    };
 
-  const res = await dwolla.post("transfers", transferRequest);
-  console.log(res.headers.get("location"));
-  return true;
+    const res = await dwolla.post("transfers", transferRequest);
+    console.log(res.headers.get("location"));
+    return true;
+  } catch (e) {
+    console.log("Error while withdrawing.", e);
+    throw e;
+  }
 };
 
 const createLabel = async (userId, amount) => {

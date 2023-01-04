@@ -131,7 +131,7 @@ const connectDwolla = async (userId, accessToken, identities) => {
       dwolla_link: dwollaLink,
     });
 
-    account.save();
+    await account.save();
 
     return { message: "Dwolla account created!", account };
   } catch (e) {
