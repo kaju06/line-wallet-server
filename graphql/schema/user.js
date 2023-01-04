@@ -28,7 +28,7 @@ scalar JSONObject
   type Mutation {
     signup(email: String!, name: String!, phone: String!): JSONObject,
     verifyOtp(email: String!, otp: String!): JSONObject,
-    linkBank(userId: String!): String
+    linkBank(userId: String!): JSONObject
     exchangeToken(userId: String!, token: String!): JSONObject
     getIdentity(token: String!): JSONObject
     deposit(userId: String!, amount: String!): String!

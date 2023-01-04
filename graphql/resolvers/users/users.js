@@ -93,7 +93,11 @@ module.exports = {
     linkBank: async (_, { userId }) => {
       try {
         const link = await linkTokenCreate(userId);
-        return link;
+        return {
+          message:
+            "Paste this link in the UI(https://line-wallet-ui.onrender.com/) to connect your bank through plaid.",
+          link,
+        };
       } catch (e) {
         return "Unable to get link token!";
       }
