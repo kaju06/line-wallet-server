@@ -1,29 +1,21 @@
 {
-  "name": "brutal-tats",
+  "name": "wallet",
   "version": "1.0.0",
   "main": "app.js",
   "license": "MIT",
-  "jest": {
-    "preset": "@shelf/jest-mongodb",
-    "testEnvironment": "node",
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "./dist"
-    ],
-    "coverageReporters": [
-      "lcov",
-      "html"
-    ],
-    "moduleNameMapper": {
-      "^mongoose$": "<rootDir>/node_modules/mongoose"
-    }
-  },
   "dependencies": {
     "bcrypt": "^5.0.1",
     "dotenv": "^10.0.0",
+    "dwolla-v2": "^3.4.0",
+    "graphql-scalars": "^1.20.1",
+    "graphql-type-json": "^0.3.2",
     "graphql-yoga": "^1.18.3",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.12.10"
+    "mongoose": "^5.12.10",
+    "nodemailer": "^6.8.0",
+    "otp-generator": "^4.0.0",
+    "plaid": "^12.2.0",
+    "sib-api-v3-sdk": "^8.5.0"
   },
   "engines": {
     "node": ">=14"

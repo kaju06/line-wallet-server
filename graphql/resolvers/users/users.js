@@ -1,42 +1,116 @@
-const User = require('../../../models/user')
-const Auth = require('../../../services/auth.service')
+const User = require("../../../models/user");
+const Auth = require("../../../services/auth.service");
+const {
+  createDwollaCustomer,
+  getWalletBalance,
+} = require("../../../services/dwolla");
+const { sendMail } = require("../../../services/email.service");
+const { generateOTP } = require("../../../services/otp.service");
+const {
+  linkTokenCreate,
+  publicTokenExchange,
+  getIdentity,
+  getAccountInfo,
+  connectDwolla,
+} = require("../../../services/plaid");
 
 module.exports = {
   Query: {
     getUsers: () => User.find(),
 
     getUser: async (_, { id }, context) => {
-      if (!context.userId) throw new Error('You must be authenticated!')
-      if (context.userId !== id) throw new Error('You can only see you own datas little fella!')
+      if (!context.userId) throw new Error("You must be authenticated!");
+      if (context.userId !== id)
+        throw new Error("You can only see you own datas little fella!");
 
-      return User.findById(id)
-    }
+      return User.findById(id);
+    },
+    createDwollaAccount: async () => {
+      const link = await createDwollaCustomer();
+      return link;
+    },
+    getAccountInfo: async (_, { token }) => {
+      const res = await getAccountInfo(token);
+      return res;
+    },
+    getWalletBalance: async (_, { userId }) => {
+      const balance = await getWalletBalance(userId);
+      return balance;
+    },
   },
 
   Mutation: {
-    signup: async (_, { email, username, password }) => {
-      const hashedPwd = await Auth.hashPassword(password)
-      const user = new User({ email, username, password: hashedPwd })
-      await user.save()
-      return 'new user successfully created'
-    },
-
-    login: async (_, { email, username, password }) => {
-      if (!username && !email) throw new Error('email or username required')
-      const userPayload = email ? { email } : {username}
-      const user = await User.findOne(userPayload)
-      if (!user) throw new Error('Unknown user', userPayload)
-
-      const correctPassword = await Auth.matchPasswords(password, user.password)
-      if (!correctPassword) throw new Error('invalid password')
-
-      return {
-        jwt: Auth.generateJwt({
-          userId: user.id,
-          username: user.username,
-          email: user.email
-        })
+    signup: async (_, { email, name, phone }) => {
+      const otpGenerated = generateOTP();
+      const user = new User({
+        email,
+        name,
+        phone,
+        otp: otpGenerated,
+      });
+      const response = await user.save();
+      try {
+        await sendMail({
+          to: email,
+          OTP: otpGenerated,
+        });
+        return {
+          message: "new user successfully created",
+          userId: response._id,
+        };
+      } catch (error) {
+        return "Unable to sign up, Please try again later.";
       }
     },
-  }
-}
+
+    verifyOtp: async (_, { email, otp }) => {
+      const user = await User.findOne({
+        email,
+      });
+      if (!user) {
+        return "User not found!";
+      }
+      if (user && user.otp !== otp) {
+        return "Invalid Otp!";
+      }
+      return {
+        message: "Otp verification successful!",
+        jwt: Auth.generateJwt({
+          userId: user._id,
+          email: user.email,
+        }),
+      };
+    },
+
+    linkBank: async (_, { userId }) => {
+      try {
+        const link = await linkTokenCreate(userId);
+        return link;
+      } catch (e) {
+        return "Unable to get link token!";
+      }
+    },
+
+    exchangeToken: async (_, { userId, token }) => {
+      try {
+        const accessToken = await publicTokenExchange(token);
+        await User.findOneAndUpdate({ _id: userId }, { token: accessToken });
+        //Dwolla account setup
+        const identities = await getIdentity(accessToken);
+        const res = await connectDwolla(userId, accessToken, identities);
+        return res;
+      } catch (e) {
+        return "Unable to exchange token!";
+      }
+    },
+
+    getIdentity: async (_, { token }) => {
+      try {
+        const identity = await getIdentity(token);
+        return identity;
+      } catch (e) {
+        return "Unable to fetch identity!";
+      }
+    },
+  },
+};

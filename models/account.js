@@ -2,30 +2,33 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema(
+const accountSchema = new Schema(
   {
-    email: {
-      type: String,
+    user_id: {
+      type: Schema.Types.ObjectId,
       required: true,
       unique: true,
+      ref: "User",
     },
-    name: {
+    account_id: {
       type: String,
       required: true,
     },
-    phone: {
+    routing: {
       type: String,
       required: true,
     },
-    otp: {
+    customer_link: {
       type: String,
-      required: true,
     },
-    token: {
+    dwolla_link: {
+      type: String,
+    },
+    bank_link: {
       type: String,
     },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("Account", accountSchema);
