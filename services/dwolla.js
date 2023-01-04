@@ -1,10 +1,10 @@
 const Account = require("../models/account");
-
+require('dotenv').config()
 var Client = require("dwolla-v2").Client;
 
 var dwolla = new Client({
-  key: "YR4CLzaaZSy111ATbpvp2ZcPGZiwj0gQGzU0PyCMElHOT0BHCF",
-  secret: "EvV1WyTbejW95PULKTz4Qsc8gdjrVlEwd4n6sLI7JUKEkx4uSm",
+  key: process.env.DWOLLA_KEY,
+  secret: process.env.DWOLLA_SECRET,
   environment: "sandbox",
 });
 
