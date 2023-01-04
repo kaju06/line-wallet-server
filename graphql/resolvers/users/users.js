@@ -63,7 +63,7 @@ module.exports = {
           OTP: otpGenerated,
         });
         return {
-          message: "new user successfully created",
+          message: "Please check your email for OTP verification.",
           userId: response._id,
         };
       } catch (error) {
