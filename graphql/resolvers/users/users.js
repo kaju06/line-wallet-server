@@ -49,6 +49,13 @@ module.exports = {
 
   Mutation: {
     signup: async (_, { email, name, phone }) => {
+      const userdata = await User.findOne({
+        email,
+      });
+      if (userdata) {
+        return { message: "User already exists!" };
+      }
+
       const otpGenerated = generateOTP();
       const user = new User({
         email,
