@@ -1,5 +1,5 @@
-const Account = require("../models/account");
 require("dotenv").config();
+const Account = require("../models/account");
 var Client = require("dwolla-v2").Client;
 
 var dwolla = new Client({
@@ -33,11 +33,16 @@ const createFundingSource = async (customerUrl, requestBody) => {
 };
 
 const getWalletBalance = async (userId) => {
-  const account = await Account.findOne({ user_id: userId });
-  console.log({ link: account.dwolla_link });
-  const res = await dwolla.get(`${account.dwolla_link}/balance`);
-  console.log(res.body.balance);
-  return res.body.balance.value;
+  try {
+    const account = await Account.findOne({ user_id: userId });
+    console.log("Link > ", account.dwolla_link);
+    const res = await dwolla.get(`${account.dwolla_link}/balance`);
+    console.log(res.body.balance);
+    return res.body.balance.value;
+  } catch (e) {
+    console.log("Error while fetching wallet balance.", e);
+    throw e;
+  }
 };
 
 const getFundings = async (link) => {

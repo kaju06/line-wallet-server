@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { Configuration, PlaidApi, PlaidEnvironments } = require("plaid");
 const Account = require("../models/account");
 const {
@@ -10,8 +11,8 @@ const configuration = new Configuration({
   basePath: PlaidEnvironments.sandbox,
   baseOptions: {
     headers: {
-      "PLAID-CLIENT-ID": "63b4334a8cf12300128e2f26",
-      "PLAID-SECRET": "9aeea48658931c7ac7344a21da9c92",
+      "PLAID-CLIENT-ID": process.env.PLAID_CLIENT_ID,
+      "PLAID-SECRET": process.env.PLAID_SECRET,
     },
   },
 });
@@ -120,7 +121,7 @@ const connectDwolla = async (userId, accessToken, identities) => {
     const dwollaLink = fundingSources.filter((i) => i.type === "balance")[0]
       ._links.self.href;
 
-    console.log({ dwollaLink });
+    console.log({ dwollaLink, userId, accountInfo, link, bankLink });
 
     const account = new Account({
       user_id: userId,

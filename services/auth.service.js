@@ -8,16 +8,6 @@ dotenv.config();
 class Auth {
   constructor() {}
 
-  static async hashPassword(pwd) {
-    const saltRounds = 10;
-    const salt = bcrypt.genSaltSync(saltRounds);
-    return bcrypt.hashSync(pwd, salt);
-  }
-
-  static async matchPasswords(requestPwd, userPwd) {
-    return bcrypt.compare(requestPwd, userPwd);
-  }
-
   static generateJwt({ email, userId }) {
     return jwt.sign({ userId, email }, process.env.TOKEN_SECRET, {
       expiresIn: "30 days",
